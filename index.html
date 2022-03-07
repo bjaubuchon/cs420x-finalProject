@@ -482,7 +482,23 @@ void main() {
         framebuffer = gl.createFramebuffer()
     }
 
-    window.ondeviceorientation = function(event) {
+    // window.ondeviceorientation = function(event) {
+    //     if(event.alpha != null) {
+    //         rotZ = event.alpha
+    //     }
+    //     if(event.beta != null) {
+    //         rotX = event.beta
+    //     }
+    //     if(event.gamma != null) {
+    //         rotY = event.gamma
+    //     }
+    //
+    //     console.log(rotZ)
+    // };
+
+    window.addEventListener("deviceorientation", handleOrientation, true);
+
+    function handleOrientation(event) {
         if(event.alpha != null) {
             rotZ = event.alpha
         }
@@ -494,7 +510,7 @@ void main() {
         }
 
         console.log(rotZ)
-    };
+    }
 
     function dtor(deg) {
         return deg * (Math.PI/180)
