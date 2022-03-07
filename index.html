@@ -83,6 +83,8 @@ uniform float PI_4;
 uniform float pSize;
 
 uniform float rot;
+uniform float rotX;
+uniform float rotY;
 
 // our chemical layer
 uniform sampler2D uSampler;
@@ -132,7 +134,7 @@ void main() {
   // initialize feedback transform output
   o_vpos = a_pos;
 
-  o_vpos.zw = vec2(clamp(o_vpos.z + (1.0 * sin(rot)), -1.0, 1.0), clamp(o_vpos.w - (1.0 * cos(rot)), -1.0, 1.0));
+  o_vpos.zw = vec2(clamp(o_vpos.z + (1.0 * sin(rotY)), -1.0, 1.0), clamp(o_vpos.w + (1.0 * sin(rotX)), -1.0, 1.0));
 
   // if most chemical is found to left...
   if( left > forward && left > right ) {
@@ -181,7 +183,7 @@ void main() {
         agentCount = 1000000, ddProgram, ddPosition, pane,
         sensorDistanceLoc, colorLoc, transparencyLoc, decayLoc,
         rotationLoc, pointSizeLoc, m, audiocontext, track, analyzer, firstClick, mButton,
-        playing, rotZ, rotX, rotY, rotLoc
+        playing, rotZ, rotX, rotY, rotLoc, rotXLoc, rotYLoc
 
     const PARAMS = {
         Sensor_Distance: 9.0,
@@ -238,12 +240,12 @@ void main() {
         playing = false
 
         rotZ = 0
-        rotX = 0
+        rotX = -90
         rotY = 0
 
         console.log(rotZ)
 
-        screen.orientation.lock("portrait-primary")
+        //screen.orientation.lock("portrait-primary")
 
         makeCopyPhase()
         makeSimulationPhase()
@@ -394,6 +396,8 @@ void main() {
         rotationLoc = gl.getUniformLocation(simulationProgram, 'PI_4')
         pointSizeLoc = gl.getUniformLocation(simulationProgram, 'pSize')
         rotLoc = gl.getUniformLocation(simulationProgram, 'rot')
+        rotXLoc = gl.getUniformLocation(simulationProgram, 'rotX')
+        rotYLoc = gl.getUniformLocation(simulationProgram, 'rotY')
         gl.uniform2f( uRes, gl.drawingBufferWidth, gl.drawingBufferHeight )
 
         // get position attribute location in shader
@@ -478,7 +482,23 @@ void main() {
         framebuffer = gl.createFramebuffer()
     }
 
-    window.ondeviceorientation = function(event) {
+    // window.ondeviceorientation = function(event) {
+    //     if(event.alpha != null) {
+    //         rotZ = event.alpha
+    //     }
+    //     if(event.beta != null) {
+    //         rotX = event.beta
+    //     }
+    //     if(event.gamma != null) {
+    //         rotY = event.gamma
+    //     }
+    //
+    //     console.log(rotZ)
+    // };
+
+    window.addEventListener("deviceorientation", handleOrientation, true);
+
+    function handleOrientation(event) {
         if(event.alpha != null) {
             rotZ = event.alpha
         }
@@ -490,7 +510,7 @@ void main() {
         }
 
         console.log(rotZ)
-    };
+    }
 
     function dtor(deg) {
         return deg * (Math.PI/180)
@@ -566,6 +586,8 @@ void main() {
         gl.uniform1f(rotationLoc, PARAMS.Rotation_Amount)
         gl.uniform1f(pointSizeLoc, PARAMS.Point_Size)
         gl.uniform1f(rotLoc, dtor(rotZ))
+        gl.uniform1f(rotXLoc, dtor(rotX))
+        gl.uniform1f(rotYLoc, dtor(rotY))
 
         gl.bindFramebuffer( gl.FRAMEBUFFER, framebuffer )
 
