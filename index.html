@@ -25,7 +25,7 @@ uniform sampler2D uSampler;
 uniform vec2 resolution;
 
 uniform float decay;
-//uniform float rot;
+
 
 float get(int x, int y) {
   return texture( uSampler, ( gl_FragCoord.xy + vec2(x, y) ) / resolution ).r;
@@ -35,13 +35,13 @@ out vec4 color;
 void main() {
   //float rotAmount = 0.0;
   float sum = get(0,0) * -1.;
-  sum += get(-1,0)  *  .2; //- (rotAmount * sin(rot));
+  sum += get(-1,0)  *  .2;
   sum += get(-1,-1) *  .05;
-  sum += get(0,-1)  *  .2; //+ (rotAmount * sin(rot));
+  sum += get(0,-1)  *  .2;
   sum += get(1,-1)  *  .05;
-  sum += get(1,0)   *  .2; //- (rotAmount * cos(rot));
+  sum += get(1,0)   *  .2;
   sum += get(1,1)   *  .05;
-  sum += get(0,1)   *  .2; //+ (rotAmount * cos(rot));
+  sum += get(0,1)   *  .2;
   sum += get(-1,1)  *  .05;
 
   vec2 pos = gl_FragCoord.xy / resolution;
@@ -191,7 +191,9 @@ void main() {
         Transparency: 0.1,
         Decay: 0.9,
         Rotation_Amount: 3.1415926538 / 4,
-        Point_Size: 1.0
+        Point_Size: 1.0,
+        X_Rotation: -90,
+        Y_Rotation: 0
         //Music: false
     };
 
@@ -207,6 +209,8 @@ void main() {
     f1.addInput(PARAMS, 'Decay', {min: 0.0, max: 2.0});
     f1.addInput(PARAMS, 'Rotation_Amount', {min: 0.0, max: 3.1415926538});
     f1.addInput(PARAMS, 'Point_Size', {min: 0.25, max: 4.0});
+    f1.addInput(PARAMS, 'X_Rotation', {min: -360, max: 360});
+    f1.addInput(PARAMS, 'Y_Rotation', {min: -360, max: 360});
     //f1.addInput(PARAMS, 'Music');
     //mButton = f1.addButton({title: 'Music'});
 
@@ -575,6 +579,9 @@ void main() {
         //         playing = false;
         //     }
         // });
+
+        rotX = PARAMS.X_Rotation
+        rotY = PARAMS.Y_Rotation
 
         /* AGENT-BASED SIMULATION */
         gl.useProgram( simulationProgram )
